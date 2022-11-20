@@ -86,4 +86,10 @@ public class Neo4jDAO {
         query = String.format(query, roadname1, roadname2);
         return this.session.run(query);
     }
+
+    public Result getNearbyDrivers(String uid, Double longitude, Double latitude, int radius) {
+        String query = "MATCH (u: user) WHERE (point.distance(point({longitude:%f, latitude:%f}), point({longitude:u.longitude, latitude:u.latitude})) <= %d * 1000) AND (u.is_driver=true) AND (u.uid<>'%s') RETURN u.longitude, u.latitude, u.street";
+        query = String.format(query, longitude, latitude, radius, uid);
+        return this.session.run(query);
+    }
 } 
