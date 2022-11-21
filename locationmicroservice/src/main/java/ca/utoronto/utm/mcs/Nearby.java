@@ -45,6 +45,7 @@ public class Nearby extends Endpoint {
                 while (nearbyDriversResult.hasNext()) {
                     count++;
                     Record driver = nearbyDriversResult.next();
+                    String dUid = driver.get("u.uid").asString();
                     Double dLongitude = driver.get("u.longitude").asDouble();
                     Double dLatitude = driver.get("u.latitude").asDouble();
                     String dStreet = driver.get("u.street").asString();
@@ -52,7 +53,7 @@ public class Nearby extends Endpoint {
                     driverData.put("longitude", dLongitude);
                     driverData.put("latitude", dLatitude);
                     driverData.put("street", dStreet);
-                    data.put(Integer.toString(count), driverData);
+                    data.put(dUid, driverData);
                 }
 
                 if (count > 0) {
