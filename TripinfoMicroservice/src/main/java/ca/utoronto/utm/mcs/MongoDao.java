@@ -61,4 +61,29 @@ public class MongoDao {
 		}
 	}
 
+	public boolean updateTrip(String _id, int distance, int endTime, String timeElapsed, double discount, double totalCost, double driverPayout){
+		try {
+			BasicDBObject query = new BasicDBObject();
+			query.put("_id", new ObjectId(_id));
+
+			BasicDBObject updatedDoc = new BasicDBObject();
+			updatedDoc.put("distance", distance);
+			updatedDoc.put("endTime", endTime);
+			updatedDoc.put("timeElapsed", timeElapsed);
+			updatedDoc.put("discount", discount);
+			updatedDoc.put("totalCost", totalCost);
+			updatedDoc.put("driverPayout", driverPayout);
+
+			BasicDBObject updateObject = new BasicDBObject();
+			updateObject.put("$set", updatedDoc);
+
+			this.collection.updateOne(query, updateObject);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error occurred");
+		}
+		return false;
+	}
+
 }
