@@ -4,6 +4,7 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoCollection;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class MongoDao {
 	
@@ -22,6 +23,19 @@ public class MongoDao {
 		this.collection = database.getCollection("trips");
 	}
 
-	// *** implement database operations here *** //
+	public ObjectId postTrip(String driver, String passenger, int startTime){
+		Document doc = new Document();
+		doc.put("driver", driver);
+		doc.put("passenger", passenger);
+		doc.put("startTime", startTime);
+
+		try {
+			this.collection.insertOne(doc);
+			return doc.getObjectId("_id");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }
