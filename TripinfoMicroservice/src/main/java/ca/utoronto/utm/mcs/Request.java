@@ -13,6 +13,8 @@ import java.net.URI;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class Request extends Endpoint {
@@ -28,6 +30,31 @@ public class Request extends Endpoint {
 
     @Override
     public void handlePost(HttpExchange r) throws IOException,JSONException{
-        // TODO
+        JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
+        if (body.has("uid") && body.has("radius")) {
+            try {
+                HttpClient httpClient = HttpClient.newHttpClient();
+
+                String getUri = String.format("http://locationmicroservice:8000/location/nearbyDriver/%s?radius=%d", body.getString("uid"), body.getInt("radius"));
+                HttpRequest getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
+                HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+                if (getResponse.statusCode() == 200) {
+                    JSONObject res = new JSONObject();
+                    JSONObject bod = new JSONObject(getResponse.body());
+                    JSONObject data = bod.getJSONObject("data");
+                    res.put("data", JSONObject.getNames(data));
+
+                    this.sendResponse(r, res, 200);
+                } else {
+                    this.sendStatus(r, 404);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.sendStatus(r, 500);
+            }
+        } else {
+            this.sendStatus(r, 400);
+        }
     }
 }
