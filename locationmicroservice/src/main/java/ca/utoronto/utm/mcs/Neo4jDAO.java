@@ -108,11 +108,8 @@ public class Neo4jDAO {
         String query = "MATCH (source:road {name: '%s'}), (target:road {name: '%s'})" +
                 "CALL gds.shortestPath.dijkstra.stream('%s',{sourceNode: source, targetNode: target,relationshipWeightProperty: '%s' })" +
                 " YIELD costs, nodeIds" +
-                " RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).name] AS nodeNames, costs";
+                " RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).name] AS nodeNames, costs, [nodeId IN nodeIds | gds.util.asNode(nodeId).has_traffic] as traffic";
         query = String.format(query, source, target,projectionName, weightName);
-        Result r = this.session.run(query);
-        System.out.println(query);
-        System.out.println("Done");
-        return r;
+        return this.session.run(query);
     }
 } 

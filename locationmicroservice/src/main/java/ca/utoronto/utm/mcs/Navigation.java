@@ -43,17 +43,39 @@ public class Navigation extends Endpoint {
                 Record passengerLocation = passengerLocationResult.next();
                 String passengerStreet = passengerLocation.get("n.street").asString();
                 Result result = this.dao.getNavigation(passengerStreet, driverStreet);
-                System.out.println(result);
-                while(result.hasNext()){
-                    System.out.println("hererererer");
+                if(result.hasNext()){
                     Record driver = result.next();
-                    List<Object> nodenames = driver.get("nodeNames").asList();
-                    List<Object> costs = driver.get("costs").asList();
-                    res.put("nodenames", nodenames);
-                    res.put("costs", costs);
-                }
-                this.sendResponse(r, res, 200);
+                    Value nodenames = driver.get("nodeNames");
+                    Value costs = driver.get("costs");
+                    Value traffic_list = driver.get("traffic");
+                    res.put("status", "OK");
 
+                    JSONObject data = new JSONObject();
+                    Float total_cost = costs.get(costs.size()-1).asFloat();
+                    data.put("total_time", total_cost);;
+
+                    JSONArray  route = new JSONArray ();
+                    Double time_fix = 0.0;
+                    for (int i = 0; i < nodenames.size(); i++) {
+                        JSONObject new_route = new JSONObject();
+                        String val1 = nodenames.get(i).asString();
+                        Double val2 = new Double(costs.get(i).toString());
+                        Boolean val3 = traffic_list.get(i).asBoolean();
+                        Double actual_time = val2 - time_fix;
+                        time_fix += val2;
+                        new_route.put("street",val1);
+                        new_route.put("time",actual_time);
+                        // difference in field name
+                        new_route.put("is_traffic",val3);
+                        route.put(new_route);
+                    }
+                    data.put("route",route );
+                    res.put("data", data);
+                    this.sendResponse(r, res, 200);
+                }
+                else {
+                    this.sendStatus(r, 404);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
