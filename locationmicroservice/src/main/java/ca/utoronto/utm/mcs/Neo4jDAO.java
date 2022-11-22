@@ -92,23 +92,27 @@ public class Neo4jDAO {
         query = String.format(query, longitude, latitude, radius, uid);
         return this.session.run(query);
     }
-    public Result getNavigation(String driverStreet, String passengerStreet) {
+    public Result getNavigation(String source, String target) {
         String projectionName = "myGraph";
         String nodeName = "road";
         String relationName = "ROUTE_TO";
+        String weightName = "travel_time";
         String dropProjection = "CALL gds.graph.drop('%s', false) " +
                 "YIELD graphName";
         dropProjection = String.format(dropProjection, projectionName);
         this.session.run(dropProjection);
         String createProjection = "CALL gds.graph.project('%s', '%s', '%s',{relationshipProperties:'%s'})";
-        createProjection = String.format(createProjection, projectionName, nodeName, relationName);
+        createProjection = String.format(createProjection, projectionName, nodeName, relationName, weightName);
         this.session.run(createProjection);
 
         String query = "MATCH (source:road {name: '%s'}), (target:road {name: '%s'})" +
-                "CALL gds.shortestPath.dijkstra.stream('%s',{sourceNode: source, targetNode: target,relationshipWeightProperty: '%s' }" +
-                "YIELD costs, totalCost, path" +
-                "RETURN totalCost,costs, nodes(path) as path";
-        query = String.format(query, driverStreet, passengerStreet);
-        return this.session.run(query);
+                "CALL gds.shortestPath.dijkstra.stream('%s',{sourceNode: source, targetNode: target,relationshipWeightProperty: '%s' })" +
+                " YIELD costs, nodeIds" +
+                " RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).name] AS nodeNames, costs";
+        query = String.format(query, source, target,projectionName, weightName);
+        Result r = this.session.run(query);
+        System.out.println(query);
+        System.out.println("Done");
+        return r;
     }
 } 
