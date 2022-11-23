@@ -19,6 +19,7 @@ public class User extends Endpoint {
 	public void handleGet(HttpExchange r) throws IOException, JSONException {
 		
 		// check if request url isn't malformed
+		System.out.println("Heresss");
 		String[] splitUrl = r.getRequestURI().getPath().split("/");
 		if (splitUrl.length != 3) {
 			this.sendStatus(r, 400);
