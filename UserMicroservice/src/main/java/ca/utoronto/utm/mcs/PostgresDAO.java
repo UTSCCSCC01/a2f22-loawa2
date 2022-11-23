@@ -71,4 +71,9 @@ public class PostgresDAO {
         query = String.format(name, email, password);
         this.st.executeQuery(query);
     }
+    public ResultSet login(String email, String password) throws SQLException {
+        String query = "SELECT uid, password FROM users WHERE email= '%s' AND password= '%s'";
+        query = String.format(email, password);
+        return this.st.executeQuery(query);
+    }
 }
