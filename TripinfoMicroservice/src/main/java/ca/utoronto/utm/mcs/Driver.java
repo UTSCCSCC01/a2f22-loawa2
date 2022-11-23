@@ -35,7 +35,9 @@ public class Driver extends Endpoint {
                 JSONObject var = new JSONObject();
                 List<String> fieldsToRemove = new ArrayList<>();
                 fieldsToRemove.add("driver");
-                var.put("results", Utils.findIterableToJSONArray(cursor, fieldsToRemove));
+                JSONObject data = new JSONObject();
+                data.put("trips", Utils.findIterableToJSONArray(cursor, fieldsToRemove));
+                var.put("data", data);
                 this.sendResponse(r, var, 200);
                 return;
             }
