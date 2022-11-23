@@ -20,7 +20,6 @@ public class Register extends Endpoint {
     @Override
     public void handlePost(HttpExchange r) throws IOException, JSONException {
         JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
-        System.out.println("Here");
         if (body.has("name") && body.has("email") && body.has("password")) {
             try {
                 this.dao.register(body.getString("name"), body.getString("email"), body.getString("password"));
