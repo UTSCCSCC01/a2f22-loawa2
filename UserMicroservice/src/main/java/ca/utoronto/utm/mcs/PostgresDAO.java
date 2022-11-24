@@ -10,7 +10,6 @@ public class PostgresDAO {
 
 	public PostgresDAO() {
         Dotenv dotenv = Dotenv.load();
-        System.out.println("Here");
         String addr = dotenv.get("POSTGRES_ADDR");
         String url = "jdbc:postgresql://" + addr + ":5432/root";
 		try {

@@ -21,7 +21,6 @@ public class Login extends Endpoint {
     @Override
     public void handlePost(HttpExchange r) throws IOException, JSONException {
         JSONObject body = new JSONObject(Utils.convert(r.getRequestBody()));
-        System.out.println("Here");
         if (body.has("email") && body.has("password")) {
             try {
                 ResultSet res = this.dao.login(body.getString("email"), body.getString("password"));
