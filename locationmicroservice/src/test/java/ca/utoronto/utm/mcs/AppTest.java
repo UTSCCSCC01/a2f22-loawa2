@@ -28,8 +28,8 @@ public class AppTest {
         String passengerPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", passengerUid, false);
         String driverUid = generateRandomId();
         String driverPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", driverUid, true);
-        String userPutUri = "http://localhost:8000/location/user";
-        String getUri = String.format("http://localhost:8000/location/nearbyDriver/%s?radius=%d", passengerUid, 10);
+        String userPutUri = "http://apigateway:8000/location/user";
+        String getUri = String.format("http://apigateway:8000/location/nearbyDriver/%s?radius=%d", passengerUid, 10);
 
         int expectedStatus = 200;
         String expectedData = String.format("{\"street\":\"%s\",\"latitude\":%d,\"longitude\":%d}", "", 0, 0);
@@ -67,7 +67,7 @@ public class AppTest {
     public void getNearbyDriverFail() throws URISyntaxException, IOException, InterruptedException, JSONException {
         String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
         int expectedStatus = 400;
-        String getUri = "http://localhost:8000/location/nearbyDriver/";
+        String getUri = "http://apigateway:8000/location/nearbyDriver/";
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(new URI(getUri))
@@ -86,23 +86,23 @@ public class AppTest {
         String driverPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", driverUid, true);
         String passengerUid = generateRandomId();
         String passengerPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", passengerUid, false);
-        String userPutUri = "http://localhost:8000/location/user";
+        String userPutUri = "http://apigateway:8000/location/user";
 
         String roadSource = generateRandomId();
         String roadSourcePutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadSource, false);
         String roadTarget = generateRandomId();
         String roadTargetPutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadTarget, false);
-        String roadPutUri = "http://localhost:8000/location/road";
+        String roadPutUri = "http://apigateway:8000/location/road";
 
-        String setDriverLocation = String.format("http://localhost:8000/location/%s", driverUid);
+        String setDriverLocation = String.format("http://apigateway:8000/location/%s", driverUid);
         String driverLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadSource);
-        String setPassengerLocation = String.format("http://localhost:8000/location/%s", passengerUid);
+        String setPassengerLocation = String.format("http://apigateway:8000/location/%s", passengerUid);
         String passengerLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadTarget);
 
         String setRouteBody = String.format("{\"roadName1\":\"%s\",\"roadName2\":\"%s\",\"hasTraffic\":%b,\"time\":%d}", roadSource, roadTarget, false, 10);
-        String routePutUri = "http://localhost:8000/location/hasRoute";
+        String routePutUri = "http://apigateway:8000/location/hasRoute";
 
-        String getUri = String.format("http://localhost:8000/location/navigation/%s?passengerUid=%s", driverUid, passengerUid);
+        String getUri = String.format("http://apigateway:8000/location/navigation/%s?passengerUid=%s", driverUid, passengerUid);
 
         int expectedStatus = 200;
         String expectedData = String.format("{\"data\":" +
@@ -175,7 +175,7 @@ public class AppTest {
     public void getNavigationFail() throws URISyntaxException, IOException, InterruptedException {
         String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
         int expectedStatus = 400;
-        String getUri = "http://localhost:8000/location/navigation/";
+        String getUri = "http://apigateway:8000/location/navigation/";
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(new URI(getUri))
