@@ -1,5 +1,6 @@
 package ca.utoronto.utm.mcs;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.*;
 import com.mongodb.client.MongoCollection;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -23,6 +24,28 @@ public class MongoDao {
 		this.collection = database.getCollection("trips");
 	}
 
+	public FindIterable<Document> getPassengerTrips(String passenger){
+		try {
+			BasicDBObject query = new BasicDBObject();
+			query.put("passenger", passenger);
+			return this.collection.find(query);
+		} catch (Exception e) {
+			System.out.println("Error occurred");
+		}
+		return null;
+	}
+
+	public FindIterable<Document> getDriverTrips(String driver){
+		try {
+			BasicDBObject query = new BasicDBObject();
+			query.put("driver", driver);
+			return this.collection.find(query);
+		} catch (Exception e) {
+			System.out.println("Error occurred");
+		}
+		return null;
+	}
+
 	public ObjectId postTrip(String driver, String passenger, int startTime){
 		Document doc = new Document();
 		doc.put("driver", driver);
@@ -36,6 +59,31 @@ public class MongoDao {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public boolean updateTrip(String _id, int distance, int endTime, String timeElapsed, double discount, double totalCost, double driverPayout){
+		try {
+			BasicDBObject query = new BasicDBObject();
+			query.put("_id", new ObjectId(_id));
+
+			BasicDBObject updatedDoc = new BasicDBObject();
+			updatedDoc.put("distance", distance);
+			updatedDoc.put("endTime", endTime);
+			updatedDoc.put("timeElapsed", timeElapsed);
+			updatedDoc.put("discount", discount);
+			updatedDoc.put("totalCost", totalCost);
+			updatedDoc.put("driverPayout", driverPayout);
+
+			BasicDBObject updateObject = new BasicDBObject();
+			updateObject.put("$set", updatedDoc);
+
+			this.collection.updateOne(query, updateObject);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error occurred");
+		}
+		return false;
 	}
 
 }
