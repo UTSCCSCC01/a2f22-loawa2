@@ -27,7 +27,7 @@ public class AppTest {
     public void registerPass() throws URISyntaxException, IOException, InterruptedException {
         String expectedResponse = "{\"status\":\"OK\"}";
         int expectedStatus = 200;
-        String postUri = "http://localhost:8001/user/register";
+        String postUri = "http://apigateway:8000/user/register";
         String name = generateRandomId();
         String email = generateRandomId();
         String password = generateRandomId();
@@ -46,7 +46,7 @@ public class AppTest {
     public void registerFail() throws URISyntaxException, IOException, InterruptedException {
         String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
         int expectedStatus = 400;
-        String postUri = "http://localhost:8001/user/register";
+        String postUri = "http://apigateway:8000/user/register";
         String PostBody = String.format("{\"name\":\"%s\", \"potato\":\"%s\"}", "driverUid", "yes");
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(new URI(postUri))
@@ -62,8 +62,8 @@ public class AppTest {
     public void loginPass() throws URISyntaxException, IOException, InterruptedException {
         String expectedResponse = "{\"status\":\"OK\"}";
         int expectedStatus = 200;
-        String registerUri = "http://localhost:8001/user/register";
-        String loginUri = "http://localhost:8001/user/login";
+        String registerUri = "http://apigateway:8000/user/register";
+        String loginUri = "http://apigateway:8000/user/login";
         String name = generateRandomId();
         String email = generateRandomId();
         String password = generateRandomId();
@@ -89,7 +89,7 @@ public class AppTest {
     public void loginFail() throws URISyntaxException, IOException, InterruptedException {
         String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
         int expectedStatus = 400;
-        String postUri = "http://localhost:8001/user/login";
+        String postUri = "http://apigateway:8000/user/login";
         String PostBody = String.format("{\"name\":\"%s\", \"potato\":\"%s\"}", "driverUid", "yes");
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(new URI(postUri))
