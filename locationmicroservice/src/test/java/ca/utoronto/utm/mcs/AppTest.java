@@ -155,7 +155,7 @@ public class AppTest {
                 .GET()
                 .build();
 
-        HttpResponse<String> getResponse = httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
+        httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
         httpClient.send(driverPutRequest, HttpResponse.BodyHandlers.ofString());
 
         httpClient.send(roadSourcePutRequest, HttpResponse.BodyHandlers.ofString());
@@ -164,11 +164,8 @@ public class AppTest {
         httpClient.send(passengerPatchRequest, HttpResponse.BodyHandlers.ofString());
         httpClient.send(driverPatchRequest, HttpResponse.BodyHandlers.ofString());
 
-        getResponse = httpClient.send(routePostRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println(getResponse);
-        System.out.println(getResponse.body());
-
-        getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        httpClient.send(routePostRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(expectedData, getResponse.body());
         assertEquals(expectedStatus, getResponse.statusCode());
