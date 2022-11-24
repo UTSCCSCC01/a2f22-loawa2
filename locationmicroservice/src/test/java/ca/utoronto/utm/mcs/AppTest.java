@@ -95,22 +95,22 @@ public class AppTest {
         String roadPutUri = "http://localhost:8000/location/road";
 
         String setDriverLocation = String.format("http://localhost:8000/location/%s", driverUid);
-        String driverLocationPatchBody = String.format("{\"longitude\":%d,\"latitude\":%d,\"street\":\"%s\"}", 0, 0, roadSource);
+        String driverLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadSource);
         String setPassengerLocation = String.format("http://localhost:8000/location/%s", passengerUid);
-        String passengerLocationPatchBody = String.format("{\"longitude\":%d,\"latitude\":%d,\"street\":\"%s\"}", 0, 0, roadTarget);
+        String passengerLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadTarget);
 
-        String setRouteBody = String.format("{\"roadName1\":\"%s\",\"roadName2\":\"%s\",\"hasTraffic\":\"%b\", \"time\":10}", roadSource, roadTarget, false);
+        String setRouteBody = String.format("{\"roadName1\":\"%s\",\"roadName2\":\"%s\",\"hasTraffic\":%b,\"time\":%d}", roadSource, roadTarget, false, 10);
         String routePutUri = "http://localhost:8000/location/hasRoute";
 
         String getUri = String.format("http://localhost:8000/location/navigation/%s?passengerUid=%s", driverUid, passengerUid);
 
         int expectedStatus = 200;
         String expectedData = String.format("{\"data\":" +
-                "{\"route\"}:" +
-                "[{\"street\":\"%s\",\"is_traffic\":false,\"time\":0}, " +
-                "{\"street\":\"%s\",\"is_traffic\":false, \"time\":10}], " +
+                "{\"route\":" +
+                "[{\"street\":\"%s\",\"is_traffic\":false,\"time\":0}," +
+                "{\"street\":\"%s\",\"is_traffic\":false,\"time\":10}]," +
                 "\"total_time\":10}," +
-                "\"status\":\"OK\"", roadSource, roadTarget);
+                "\"status\":\"OK\"}", roadSource, roadTarget);
 
         // users
         HttpRequest passengerPutRequest = HttpRequest.newBuilder()
@@ -155,7 +155,7 @@ public class AppTest {
                 .GET()
                 .build();
 
-        httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> getResponse = httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
         httpClient.send(driverPutRequest, HttpResponse.BodyHandlers.ofString());
 
         httpClient.send(roadSourcePutRequest, HttpResponse.BodyHandlers.ofString());
@@ -164,8 +164,11 @@ public class AppTest {
         httpClient.send(passengerPatchRequest, HttpResponse.BodyHandlers.ofString());
         httpClient.send(driverPatchRequest, HttpResponse.BodyHandlers.ofString());
 
-        httpClient.send(routePostRequest, HttpResponse.BodyHandlers.ofString());
-        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        getResponse = httpClient.send(routePostRequest, HttpResponse.BodyHandlers.ofString());
+        System.out.println(getResponse);
+        System.out.println(getResponse.body());
+
+        getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(expectedData, getResponse.body());
         assertEquals(expectedStatus, getResponse.statusCode());
