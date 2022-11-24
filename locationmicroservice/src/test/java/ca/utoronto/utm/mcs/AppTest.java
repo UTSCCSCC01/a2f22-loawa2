@@ -82,14 +82,110 @@ public class AppTest {
 
     @Test
     public void getNavigationPass() throws URISyntaxException, IOException, InterruptedException {
-        // TODO: FINISH THIS TEST
-        fail();
+        String driverUid = generateRandomId();
+        String driverPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", driverUid, true);
+        String passengerUid = generateRandomId();
+        String passengerPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", passengerUid, false);
+        String userPutUri = "http://localhost:8000/location/user";
+
+        String roadSource = generateRandomId();
+        String roadSourcePutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadSource, false);
+        String roadTarget = generateRandomId();
+        String roadTargetPutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadTarget, false);
+        String roadPutUri = "http://localhost:8000/location/road";
+
+        String setDriverLocation = String.format("http://localhost:8000/location/%s", driverUid);
+        String driverLocationPatchBody = String.format("{\"longitude\":%d,\"latitude\":%d,\"street\":\"%s\"}", 0, 0, roadSource);
+        String setPassengerLocation = String.format("http://localhost:8000/location/%s", passengerUid);
+        String passengerLocationPatchBody = String.format("{\"longitude\":%d,\"latitude\":%d,\"street\":\"%s\"}", 0, 0, roadTarget);
+
+        String setRouteBody = String.format("{\"roadName1\":\"%s\",\"roadName2\":\"%s\",\"hasTraffic\":\"%b\", \"time\":10}", roadSource, roadTarget, false);
+        String routePutUri = "http://localhost:8000/location/hasRoute";
+
+        String getUri = String.format("http://localhost:8000/location/navigation/%s?passengerUid=%s", driverUid, passengerUid);
+
+        int expectedStatus = 200;
+        String expectedData = String.format("{\"data\":" +
+                "{\"route\"}:" +
+                "[{\"street\":\"%s\",\"is_traffic\":false,\"time\":0}, " +
+                "{\"street\":\"%s\",\"is_traffic\":false, \"time\":10}], " +
+                "\"total_time\":10}," +
+                "\"status\":\"OK\"", roadSource, roadTarget);
+
+        // users
+        HttpRequest passengerPutRequest = HttpRequest.newBuilder()
+                .uri(new URI(userPutUri))
+                .PUT(HttpRequest.BodyPublishers.ofString(passengerPutBody))
+                .build();
+
+        HttpRequest driverPutRequest = HttpRequest.newBuilder()
+                .uri(new URI(userPutUri))
+                .PUT(HttpRequest.BodyPublishers.ofString(driverPutBody))
+                .build();
+        // road
+        HttpRequest roadSourcePutRequest = HttpRequest.newBuilder()
+                .uri(new URI(roadPutUri))
+                .PUT(HttpRequest.BodyPublishers.ofString(roadSourcePutBody))
+                .build();
+
+        HttpRequest roadTargetRequest = HttpRequest.newBuilder()
+                .uri(new URI(roadPutUri))
+                .PUT(HttpRequest.BodyPublishers.ofString(roadTargetPutBody))
+                .build();
+
+        // user's location
+        HttpRequest passengerPatchRequest = HttpRequest.newBuilder()
+                .uri(new URI(setPassengerLocation))
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(passengerLocationPatchBody))
+                .build();
+
+        HttpRequest driverPatchRequest = HttpRequest.newBuilder()
+                .uri(new URI(setDriverLocation))
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(driverLocationPatchBody))
+                .build();
+
+        // route between source and target
+        HttpRequest routePostRequest = HttpRequest.newBuilder()
+                .uri(new URI(routePutUri))
+                .method("POST", HttpRequest.BodyPublishers.ofString(setRouteBody))
+                .build();
+
+        HttpRequest getRequest = HttpRequest.newBuilder()
+                .uri(new URI(getUri))
+                .GET()
+                .build();
+
+        httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
+        httpClient.send(driverPutRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClient.send(roadSourcePutRequest, HttpResponse.BodyHandlers.ofString());
+        httpClient.send(roadTargetRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClient.send(passengerPatchRequest, HttpResponse.BodyHandlers.ofString());
+        httpClient.send(driverPatchRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClient.send(routePostRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(expectedData, getResponse.body());
+        assertEquals(expectedStatus, getResponse.statusCode());
     }
 
     @Test
     public void getNavigationFail() throws URISyntaxException, IOException, InterruptedException {
-        // TODO: FINISH THIS TEST
-        fail();
+        String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
+        int expectedStatus = 400;
+        String getUri = "http://localhost:8000/location/navigation/";
+
+        HttpRequest getRequest = HttpRequest.newBuilder()
+                .uri(new URI(getUri))
+                .GET()
+                .build();
+
+        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(expectedStatus, getResponse.statusCode());
+        assertEquals(expectedResponse, getResponse.body());
     }
 
     private String generateRandomId(){

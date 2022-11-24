@@ -42,7 +42,7 @@ public class Navigation extends Endpoint {
                 String driverStreet = driverLocation.get("n.street").asString();
                 Record passengerLocation = passengerLocationResult.next();
                 String passengerStreet = passengerLocation.get("n.street").asString();
-                Result result = this.dao.getNavigation(passengerStreet, driverStreet);
+                Result result = this.dao.getNavigation(driverStreet, passengerStreet);
                 if(result.hasNext()){
                     Record driver = result.next();
                     Value nodenames = driver.get("nodeNames");
@@ -76,6 +76,9 @@ public class Navigation extends Endpoint {
                 else {
                     this.sendStatus(r, 404);
                 }
+            }
+            else {
+                this.sendStatus(r, 404);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -10,6 +10,7 @@ public class PostgresDAO {
 
 	public PostgresDAO() {
         Dotenv dotenv = Dotenv.load();
+        System.out.println("Here");
         String addr = dotenv.get("POSTGRES_ADDR");
         String url = "jdbc:postgresql://" + addr + ":5432/root";
 		try {
@@ -64,5 +65,15 @@ public class PostgresDAO {
             query = String.format(query, isDriver.toString(), uid);
             this.st.execute(query);
         }
+    }
+    public void register(String name, String email, String password) throws SQLException {
+        String query = "INSERT INTO users (prefer_name, email ,password, rides) VALUES ('%s', '%s', '%s',0)";
+        query = String.format(query, name, email, password);
+        this.st.execute(query);
+    }
+    public ResultSet login(String email, String password) throws SQLException {
+        String query = "SELECT uid, password FROM users WHERE email= '%s' AND password= '%s'";
+        query = String.format(query, email, password);
+        return this.st.executeQuery(query);
     }
 }
