@@ -46,13 +46,13 @@ public class RequestRouter implements HttpHandler {
 					this.handleGet(r);
 					break;
 				case "POST":
-					this.handlePut(r);
+					this.handlePost(r);
 					break;
 				case "PUT":
 					this.handlePut(r);
 					break;
 				case "PATCH":
-					this.handlePut(r);
+					this.handlePatch(r);
 					break;
 				default:
 					break;
@@ -67,28 +67,138 @@ public class RequestRouter implements HttpHandler {
 		HttpRequest getRequest;
 		HttpResponse<String> getResponse;
 		// substring(11) to remove /apigateway from url
-		String urlAccessed = r.getRequestURI().toString().substring(11);
+
+		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+
 		if (urlAccessed.startsWith("/location/")) {
 			getUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
 			getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
 			getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
 			JSONObject body = new JSONObject(getResponse.body());
 			sendResponse(r, body, getResponse.statusCode());
-		} else {
+		}
+		else if (urlAccessed.startsWith("/user/")){
+			getUri = String.format("http://usermicroservice:8000%s", urlAccessed);
+			getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
+			getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(getResponse.body());
+			sendResponse(r, body, getResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/trip/")){
+			getUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
+			getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(getResponse.body());
+			sendResponse(r, body, getResponse.statusCode());
+		}
+		else {
 			sendStatus(r, 404);
 		}
 	}
 
-	public void handlePost(HttpExchange r) throws IOException {
-		System.out.println("Handle post");
+	public void handlePost(HttpExchange r) throws IOException, InterruptedException, URISyntaxException, JSONException  {
+		String postUri;
+		HttpRequest postRequest;
+		HttpResponse<String> postResponse;
+		// substring(11) to remove /apigateway from url
+
+		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
+		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+
+		if (urlAccessed.startsWith("/location/")) {
+			postUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
+			postRequest = HttpRequest.newBuilder().uri(new URI(postUri)).method("POST",bodyRequest ).build();
+			postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(postResponse.body());
+			sendResponse(r, body, postResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/user/")){
+			postUri = String.format("http://usermicroservice:8000%s", urlAccessed);
+			postRequest = HttpRequest.newBuilder().uri(new URI(postUri)).method("POST",bodyRequest ).build();
+			postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(postResponse.body());
+			sendResponse(r, body, postResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/trip/")){
+			postUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			postRequest = HttpRequest.newBuilder().uri(new URI(postUri)).method("POST",bodyRequest ).build();
+			postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(postResponse.body());
+			sendResponse(r, body, postResponse.statusCode());
+		}
+		else {
+			sendStatus(r, 404);
+		}
 	}
 
-	public void handlePut(HttpExchange r) throws IOException {
-		System.out.println("Handle put");
+	public void handlePut(HttpExchange r) throws IOException, InterruptedException, URISyntaxException, JSONException {
+		String putUri;
+		HttpRequest putRequest;
+		HttpResponse<String> putResponse;
+		// substring(11) to remove /apigateway from url
+
+		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
+		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+
+		if (urlAccessed.startsWith("/location/")) {
+			putUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
+			putRequest = HttpRequest.newBuilder().uri(new URI(putUri)).method("PUT",bodyRequest ).build();
+			putResponse = httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(putResponse.body());
+			sendResponse(r, body, putResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/user/")){
+			putUri = String.format("http://usermicroservice:8000%s", urlAccessed);
+			putRequest = HttpRequest.newBuilder().uri(new URI(putUri)).method("PUT",bodyRequest ).build();
+			putResponse = httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(putResponse.body());
+			sendResponse(r, body, putResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/trip/")){
+			putUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			putRequest = HttpRequest.newBuilder().uri(new URI(putUri)).method("PUT",bodyRequest ).build();
+			putResponse = httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(putResponse.body());
+			sendResponse(r, body, putResponse.statusCode());
+		}
+		else {
+			sendStatus(r, 404);
+		}
 	}
 
-	public void handlePatch(HttpExchange r) throws IOException {
-		System.out.println("Handle patch");
+	public void handlePatch(HttpExchange r) throws IOException, InterruptedException, URISyntaxException, JSONException {
+		String patchUri;
+		HttpRequest patchRequest;
+		HttpResponse<String> patchResponse;
+		// substring(11) to remove /apigateway from url
+
+		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
+		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+
+		if (urlAccessed.startsWith("/location/")) {
+			patchUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
+			patchRequest = HttpRequest.newBuilder().uri(new URI(patchUri)).method("PATCH",bodyRequest ).build();
+			patchResponse = httpClient.send(patchRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(patchResponse.body());
+			sendResponse(r, body, patchResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/user/")){
+			patchUri = String.format("http://usermicroservice:8000%s", urlAccessed);
+			patchRequest = HttpRequest.newBuilder().uri(new URI(patchUri)).method("PATCH",bodyRequest ).build();
+			patchResponse = httpClient.send(patchRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(patchResponse.body());
+			sendResponse(r, body, patchResponse.statusCode());
+		}
+		else if (urlAccessed.startsWith("/trip/")){
+			patchUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			patchRequest = HttpRequest.newBuilder().uri(new URI(patchUri)).method("PATCH",bodyRequest ).build();
+			patchResponse = httpClient.send(patchRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(patchResponse.body());
+			sendResponse(r, body, patchResponse.statusCode());
+		}
+		else {
+			sendStatus(r, 404);
+		}
 	}
 
 	public void writeOutputStream(HttpExchange r, String response) throws IOException {
