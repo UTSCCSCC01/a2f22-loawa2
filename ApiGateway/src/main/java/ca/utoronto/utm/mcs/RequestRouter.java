@@ -54,6 +54,8 @@ public class RequestRouter implements HttpHandler {
 				case "PATCH":
 					this.handlePatch(r);
 					break;
+				case "DELETE":
+					this.handleDelete(r);
 				default:
 					break;
 			}
@@ -66,9 +68,8 @@ public class RequestRouter implements HttpHandler {
 		String getUri;
 		HttpRequest getRequest;
 		HttpResponse<String> getResponse;
-		// substring(11) to remove /apigateway from url
 
-		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+		String urlAccessed = r.getRequestURI().toString();
 
 		if (urlAccessed.startsWith("/location/")) {
 			getUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
@@ -100,10 +101,9 @@ public class RequestRouter implements HttpHandler {
 		String postUri;
 		HttpRequest postRequest;
 		HttpResponse<String> postResponse;
-		// substring(11) to remove /apigateway from url
 
 		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
-		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+		String urlAccessed = r.getRequestURI().toString();
 
 		if (urlAccessed.startsWith("/location/")) {
 			postUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
@@ -135,10 +135,9 @@ public class RequestRouter implements HttpHandler {
 		String putUri;
 		HttpRequest putRequest;
 		HttpResponse<String> putResponse;
-		// substring(11) to remove /apigateway from url
 
 		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
-		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+		String urlAccessed = r.getRequestURI().toString();
 
 		if (urlAccessed.startsWith("/location/")) {
 			putUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
@@ -170,10 +169,9 @@ public class RequestRouter implements HttpHandler {
 		String patchUri;
 		HttpRequest patchRequest;
 		HttpResponse<String> patchResponse;
-		// substring(11) to remove /apigateway from url
 
 		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
-		String urlAccessed = r.getRequestURI().toString();//.substring(11);
+		String urlAccessed = r.getRequestURI().toString();
 
 		if (urlAccessed.startsWith("/location/")) {
 			patchUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
@@ -197,6 +195,25 @@ public class RequestRouter implements HttpHandler {
 			sendResponse(r, body, patchResponse.statusCode());
 		}
 		else {
+			sendStatus(r, 404);
+		}
+	}
+
+	public void handleDelete(HttpExchange r) throws IOException, InterruptedException, URISyntaxException, JSONException {
+		String deleteUri;
+		HttpRequest deleteRequest;
+		HttpResponse<String> deleteResponse;
+
+		HttpRequest.BodyPublisher bodyRequest = HttpRequest.BodyPublishers.ofByteArray(r.getRequestBody().readAllBytes());
+		String urlAccessed = r.getRequestURI().toString();
+
+		if (urlAccessed.startsWith("/location/")) {
+			deleteUri = String.format("http://locationmicroservice:8000%s", urlAccessed);
+			deleteRequest = HttpRequest.newBuilder().uri(new URI(deleteUri)).method("DELETE",bodyRequest ).build();
+			deleteResponse = httpClient.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+			JSONObject body = new JSONObject(deleteResponse.body());
+			sendResponse(r, body, deleteResponse.statusCode());
+		} else {
 			sendStatus(r, 404);
 		}
 	}
