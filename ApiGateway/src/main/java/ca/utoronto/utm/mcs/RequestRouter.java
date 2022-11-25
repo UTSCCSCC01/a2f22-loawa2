@@ -86,7 +86,7 @@ public class RequestRouter implements HttpHandler {
 			sendResponse(r, body, getResponse.statusCode());
 		}
 		else if (urlAccessed.startsWith("/trip/")){
-			getUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			getUri = String.format("http://tripinfomicroservice:8000%s", urlAccessed);
 			getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
 			getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
 			JSONObject body = new JSONObject(getResponse.body());
@@ -120,7 +120,7 @@ public class RequestRouter implements HttpHandler {
 			sendResponse(r, body, postResponse.statusCode());
 		}
 		else if (urlAccessed.startsWith("/trip/")){
-			postUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			postUri = String.format("http://tripinfomicroservice:8000%s", urlAccessed);
 			postRequest = HttpRequest.newBuilder().uri(new URI(postUri)).method("POST",bodyRequest ).build();
 			postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
 			JSONObject body = new JSONObject(postResponse.body());
@@ -154,7 +154,7 @@ public class RequestRouter implements HttpHandler {
 			sendResponse(r, body, putResponse.statusCode());
 		}
 		else if (urlAccessed.startsWith("/trip/")){
-			putUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			putUri = String.format("http://tripinfomicroservice:8000%s", urlAccessed);
 			putRequest = HttpRequest.newBuilder().uri(new URI(putUri)).method("PUT",bodyRequest ).build();
 			putResponse = httpClient.send(putRequest, HttpResponse.BodyHandlers.ofString());
 			JSONObject body = new JSONObject(putResponse.body());
@@ -188,7 +188,7 @@ public class RequestRouter implements HttpHandler {
 			sendResponse(r, body, patchResponse.statusCode());
 		}
 		else if (urlAccessed.startsWith("/trip/")){
-			patchUri = String.format("http://tripmicroservice:8000%s", urlAccessed);
+			patchUri = String.format("http://tripinfomicroservice:8000%s", urlAccessed);
 			patchRequest = HttpRequest.newBuilder().uri(new URI(patchUri)).method("PATCH",bodyRequest ).build();
 			patchResponse = httpClient.send(patchRequest, HttpResponse.BodyHandlers.ofString());
 			JSONObject body = new JSONObject(patchResponse.body());
