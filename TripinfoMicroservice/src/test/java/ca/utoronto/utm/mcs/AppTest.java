@@ -368,17 +368,112 @@ public class AppTest {
         assertEquals(expectedStatus, getResponse.statusCode());
     }
 
+
 //    @Test
-//    public void driverTimePass() throws URISyntaxException, IOException, InterruptedException {
-//        // TODO: FINISH THIS TEST
-//        fail();
-//    }
+//    public void driverTimePass() throws URISyntaxException, IOException, InterruptedException, JSONException {
+//        String driverUid = generateRandomId();
+//        String driverPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", driverUid, true);
+//        String passengerUid = generateRandomId();
+//        String passengerPutBody = String.format("{\"uid\":\"%s\", \"is_driver\":%b}", passengerUid, false);
+//        String userPutUri = "http://apigateway:8000/location/user";
 //
-//    @Test
-//    public void driverTimeFail() throws URISyntaxException, IOException, InterruptedException{
-//        // TODO: FINISH THIS TEST
-//        fail();
+//        String roadSource = generateRandomId();
+//        String roadSourcePutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadSource, false);
+//        String roadTarget = generateRandomId();
+//        String roadTargetPutBody = String.format("{\"roadName\":\"%s\", \"hasTraffic\":%b}", roadTarget, false);
+//        String roadPutUri = "http://apigateway:8000/location/road";
+//
+//        String setDriverLocation = String.format("http://apigateway:8000/location/%s", driverUid);
+//        String driverLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadSource);
+//        String setPassengerLocation = String.format("http://apigateway:8000/location/%s", passengerUid);
+//        String passengerLocationPatchBody = String.format("{\"longitude\":%f,\"latitude\":%f,\"street\":\"%s\"}", 0.0, 0.0, roadTarget);
+//
+//        String confirmTripBody = String.format("{\"driver\":%s,\"passenger\":%s,\"startTime\":\"%d\"}", driverUid, passengerUid, 10);
+//        String confirmTripUri = "http://apigateway:8000/trip/confirm";
+//
+//        // users
+//        HttpRequest passengerPutRequest = HttpRequest.newBuilder()
+//                .uri(new URI(userPutUri))
+//                .PUT(HttpRequest.BodyPublishers.ofString(passengerPutBody))
+//                .build();
+//
+//        HttpRequest driverPutRequest = HttpRequest.newBuilder()
+//                .uri(new URI(userPutUri))
+//                .PUT(HttpRequest.BodyPublishers.ofString(driverPutBody))
+//                .build();
+//        // road
+//        HttpRequest roadSourcePutRequest = HttpRequest.newBuilder()
+//                .uri(new URI(roadPutUri))
+//                .PUT(HttpRequest.BodyPublishers.ofString(roadSourcePutBody))
+//                .build();
+//
+//        HttpRequest roadTargetRequest = HttpRequest.newBuilder()
+//                .uri(new URI(roadPutUri))
+//                .PUT(HttpRequest.BodyPublishers.ofString(roadTargetPutBody))
+//                .build();
+//
+//        // user's location
+//        HttpRequest passengerPatchRequest = HttpRequest.newBuilder()
+//                .uri(new URI(setPassengerLocation))
+//                .method("PATCH", HttpRequest.BodyPublishers.ofString(passengerLocationPatchBody))
+//                .build();
+//
+//        HttpRequest driverPatchRequest = HttpRequest.newBuilder()
+//                .uri(new URI(setDriverLocation))
+//                .method("PATCH", HttpRequest.BodyPublishers.ofString(driverLocationPatchBody))
+//                .build();
+//
+//        HttpRequest confirmTripPostRequest = HttpRequest.newBuilder()
+//                .uri(new URI(confirmTripUri))
+//                .method("POST", HttpRequest.BodyPublishers.ofString(confirmTripBody))
+//                .build();
+//
+//        httpClient.send(passengerPutRequest, HttpResponse.BodyHandlers.ofString());
+//        httpClient.send(driverPutRequest, HttpResponse.BodyHandlers.ofString());
+//
+//        httpClient.send(roadSourcePutRequest, HttpResponse.BodyHandlers.ofString());
+//        httpClient.send(roadTargetRequest, HttpResponse.BodyHandlers.ofString());
+//
+//        httpClient.send(passengerPatchRequest, HttpResponse.BodyHandlers.ofString());
+//        httpClient.send(driverPatchRequest, HttpResponse.BodyHandlers.ofString());
+//
+//        HttpResponse<String> confirmTripResponse = httpClient.send(confirmTripPostRequest, HttpResponse.BodyHandlers.ofString());
+//        JSONObject body = new JSONObject(confirmTripResponse.body());
+//        String tripId = body.getString("data");
+//
+//        String driverTimeUri = String.format("http://apigateway:8000/trip/drivertime/%s", tripId);
+//
+//        HttpRequest getRequest = HttpRequest.newBuilder()
+//                .uri(new URI(driverTimeUri))
+//                .GET()
+//                .build();
+//
+//        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+//        String expectedResponse = "{\"data\":{\"arrival_time\":10},\"status\":\"OK\"}";
+//        int expectedStatus = 200;
+//
+//        assertEquals(expectedResponse, getResponse.body());
+//        assertEquals(expectedStatus, getResponse.statusCode());
+
 //    }
+
+    @Test
+    public void driverTimeFail() throws URISyntaxException, IOException, InterruptedException{
+
+        String driverTimeUri = String.format("http://apigateway:8000/trip/drivertime/%s", "");
+        HttpRequest getRequest = HttpRequest.newBuilder()
+                .uri(new URI(driverTimeUri))
+                .GET()
+                .build();
+
+        HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        String expectedResponse = "{\"status\":\"BAD REQUEST\"}";
+        int expectedStatus = 400;
+
+        assertEquals(expectedResponse, getResponse.body());
+        assertEquals(expectedStatus, getResponse.statusCode());
+    }
 
     private String generateRandomId(){
         int min = 10000000;

@@ -46,6 +46,17 @@ public class MongoDao {
 		return null;
 	}
 
+	public FindIterable<Document> getTrip(String trip){
+		try {
+			BasicDBObject query = new BasicDBObject();
+			query.put("_id", new ObjectId(trip));
+			return this.collection.find(query);
+		} catch (Exception e) {
+			System.out.println("Error occurred");
+		}
+		return null;
+	}
+
 	public ObjectId postTrip(String driver, String passenger, int startTime){
 		Document doc = new Document();
 		doc.put("driver", driver);

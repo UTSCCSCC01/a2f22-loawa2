@@ -11,9 +11,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
+import com.mongodb.client.FindIterable;
 import com.sun.net.httpserver.HttpExchange;
+import org.bson.Document;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Drivetime extends Endpoint {
 
@@ -28,6 +34,43 @@ public class Drivetime extends Endpoint {
 
     @Override
     public void handleGet(HttpExchange r) throws IOException, JSONException {
-        // TODO
+        String[] params = r.getRequestURI().toString().split("/");
+        if (params.length != 4 || params[3].isEmpty()) {
+            this.sendStatus(r, 400);
+            return;
+        }
+        String trip = params[3];
+        FindIterable<Document> cursor = this.dao.getTrip(trip);
+        try {
+            if (cursor != null) {
+                JSONObject var = new JSONObject();
+                List<String> fieldsToRemove = new ArrayList<>();
+                //fieldsToRemove.add("passenger");
+                JSONObject tripData = new JSONObject();
+                JSONObject tripJSON = Utils.findIterableToJSONArray(cursor, fieldsToRemove).getJSONObject(0);
+                String driver = tripJSON.getString("driver");
+                String passenger = tripJSON.getString("passenger");
+                HttpClient httpClient = HttpClient.newHttpClient();
+                String getUri = String.format("http://apigateway:8000/location/navigation/%s?passengerUid=%s", driver, passenger);
+                HttpRequest getRequest = HttpRequest.newBuilder().uri(new URI(getUri)).GET().build();
+                HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+                if (getResponse.statusCode() == 200) {
+                    JSONObject res = new JSONObject();
+                    JSONObject bod = new JSONObject(getResponse.body());
+                    JSONObject data = bod.getJSONObject("data");
+                    JSONObject arrivalTime = new JSONObject();
+                    arrivalTime.put("arrival_time", data.getInt("total_time"));
+                    res.put("data", arrivalTime);
+                    this.sendResponse(r, res, 200);
+                } else {
+                    this.sendStatus(r, 404);
+                }
+                return;
+            }
+            this.sendStatus(r, 404);
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.sendStatus(r, 500);
+        }
     }
 }
